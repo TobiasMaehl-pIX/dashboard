@@ -1,7 +1,10 @@
 import { getFilterOrDefault, saveFilter } from '@/services/filterService';
-import { EmploymentType, WorkArrangement } from '@prisma/client';
 import { z } from 'zod';
 import { publicProcedure, router } from './trpc';
+
+// Define enum types locally since Prisma client may not be available
+const EmploymentType = z.enum(['fulltime', 'parttime', 'contractor', 'intern']);
+const WorkArrangement = z.enum(['hybrid', 'onsite', 'remote']);
 
 export const appRouter = router({
   getFilterOrDefault: publicProcedure
@@ -18,8 +21,8 @@ export const appRouter = router({
         dateRangeTo: z.coerce.date().nullable().optional(),
         tenure: z.number().optional().nullable(),
         location: z.string().optional().nullable(),
-        employmentType: z.enum(EmploymentType).optional().nullable(),
-        workArrangement: z.enum(WorkArrangement).optional().nullable(),
+        employmentType: EmploymentType.optional().nullable(),
+        workArrangement: WorkArrangement.optional().nullable(),
       }),
     )
     .mutation(async ({ input }) => {

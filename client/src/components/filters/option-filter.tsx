@@ -35,8 +35,11 @@ export function OptionFilter<T>({
     <div className={`flex ${className} flex-col gap-1`}>
       <Label className="text-xs text-muted-foreground">{label}</Label>
       <Select
-        value={value ? String(value) : undefined}
+        value={value ? String(value) : ''}
         onValueChange={(stringValue: string) => {
+          if (stringValue === '') {
+            return; // Don't trigger change for empty value
+          }
           const option = options.find(
             (opt) => String(opt.value) === stringValue,
           );

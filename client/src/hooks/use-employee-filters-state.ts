@@ -97,7 +97,7 @@ export function usePersistedFilterState(scope: string) {
       console.log('set initial filter load', scope);
       setFilters(filter);
     }
-  }, [filterDto]);
+  }, [filterDto, scope]);
 
   // Handle query errors
   useEffect(() => {
@@ -128,7 +128,7 @@ export function usePersistedFilterState(scope: string) {
     setError(null);
     const serverData = mapToServerFilterDto(debouncedFilters, scope);
     saveFilterMutation.mutate(serverData);
-  }, [debouncedFilters, scope]);
+  }, [debouncedFilters, scope, isInitialLoad]); // Removed saveFilterMutation from deps
 
   const updateFilter = useCallback(
     <K extends keyof Filters>(key: K, value: Filters[K]) => {
@@ -136,7 +136,7 @@ export function usePersistedFilterState(scope: string) {
       console.log('update filter', scope);
       setFilters((prev) => (prev === null ? prev : { ...prev, [key]: value }));
     },
-    [],
+    [scope],
   );
 
   const clearFilters = useCallback(() => {
@@ -150,7 +150,7 @@ export function usePersistedFilterState(scope: string) {
       workArrangement: undefined,
     };
     setFilters(clearedFilters);
-  }, []);
+  }, [scope]);
 
   return {
     filters,
